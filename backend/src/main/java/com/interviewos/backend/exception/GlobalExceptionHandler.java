@@ -25,6 +25,13 @@ public class GlobalExceptionHandler {
                 .body(new ApiErrorResponse(HttpStatus.UNAUTHORIZED.value(), "Invalid email or password"));
     }
 
+    @ExceptionHandler(NoProfileDataException.class)
+    public ResponseEntity<ApiErrorResponse> handleNoProfileData(NoProfileDataException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new ApiErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage()));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiErrorResponse> handleValidation(MethodArgumentNotValidException ex) {
         String message = ex.getBindingResult().getFieldErrors().stream()

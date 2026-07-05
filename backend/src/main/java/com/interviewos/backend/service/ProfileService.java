@@ -13,8 +13,6 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,13 +24,7 @@ public class ProfileService {
     private final LeetCodeService leetCodeService;
     private final UserRepository userRepository;
     private final ProfileSnapshotRepository profileSnapshotRepository;
-
-    private static final List<String> CORE_TOPICS = List.of(
-            "Array", "String", "Hash Table", "Two Pointers", "Dynamic Programming",
-            "Tree", "Graph", "Binary Search", "Greedy", "Backtracking"
-    );
-
-    private static final int READINESS_TARGET_POINTS = 300;
+    private final AnalyticsService analyticsService;
 
     public ProfileSnapshotResponse linkProfile(String userEmail, LinkProfileRequest request) {
         User user = userRepository.findByEmail(userEmail)
@@ -51,8 +43,8 @@ public class ProfileService {
         int hardSolved = difficultyCounts.getOrDefault("Hard", 0);
         int totalSolved = difficultyCounts.getOrDefault("All", easySolved + mediumSolved + hardSolved);
 
-        int readinessScore = calculateReadinessScore(easySolved, mediumSolved, hardSolved);
-        List<String> weakTopics = calculateWeakTopics(tagBreakdown);
+        int readinessScore = analyticsService.calculateReadinessScore(easySolved, mediumSolved, hardSolved);
+        List<String> weakTopics = analyticsService.calculateWeakTopics(tagBreakdown);
 
         ProfileSnapshot snapshot = new ProfileSnapshot();
         snapshot.setUser(user);
@@ -97,26 +89,5 @@ public class ProfileService {
         for (TagCount tagCount : tagCounts) {
             target.put(tagCount.getTagName(), tagCount.getProblemsSolved());
         }
-    }
-
-    private int calculateReadinessScore(int easy, int medium, int hard) {
-        int weightedPoints = (easy * 1) + (medium * 2) + (hard * 3);
-        int score = (int) Math.round((weightedPoints / (double) READINESS_TARGET_POINTS) * 100);
-        return Math.min(100, Math.max(0, score));
-    }
-
-    private List<String> calculateWeakTopics(Map<String, Integer> tagBreakdown) {
-        List<Map.Entry<String, Integer>> ranked = new ArrayList<>();
-        for (String topic : CORE_TOPICS) {
-            ranked.add(Map.entry(topic, tagBreakdown.getOrDefault(topic, 0)));
-        }
-
-        ranked.sort(Comparator.comparingInt(Map.Entry::getValue));
-
-        List<String> weakTopics = new ArrayList<>();
-        for (int i = 0; i < Math.min(3, ranked.size()); i++) {
-            weakTopics.add(ranked.get(i).getKey());
-        }
-        return weakTopics;
     }
 }
