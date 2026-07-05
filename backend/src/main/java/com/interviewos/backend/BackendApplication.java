@@ -1,13 +1,13 @@
-package com.interviewos.backends;
+package com.interviewos.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BackendsApplication {
+public class BackendApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BackendsApplication.class, args);
+		SpringApplication.run(BackendApplication.class, args);
 	}
 
 }
