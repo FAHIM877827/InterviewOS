@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { linkProfileRequest } from "../../api/profileApi";
+import { useToast } from "../../context/ToastContext";
 
 const USERNAME_REGEX = /^[a-zA-Z0-9_-]+$/;
 
@@ -21,14 +22,13 @@ function validate(leetcodeUsername) {
 // dashboard. On success, calls onLinked() so Dashboard's useDashboardData
 // refetch runs and the empty state is replaced with real data.
 function LinkProfileForm({ onLinked }) {
+  const { showSuccess, showError } = useToast();
   const [username, setUsername] = useState("");
   const [fieldError, setFieldError] = useState("");
-  const [serverError, setServerError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(event) {
     event.preventDefault();
-    setServerError("");
 
     const errors = validate(username);
     setFieldError(errors.leetcodeUsername || "");
@@ -39,9 +39,10 @@ function LinkProfileForm({ onLinked }) {
     setIsSubmitting(true);
     try {
       await linkProfileRequest({ leetcodeUsername: username.trim() });
+      showSuccess("Profile linked! Loading your dashboard...");
       onLinked?.();
     } catch (error) {
-      setServerError(
+      showError(
         error.response?.data?.message ||
           "Unable to link that profile. Please try again."
       );
@@ -56,15 +57,6 @@ function LinkProfileForm({ onLinked }) {
       noValidate
       className="flex w-full max-w-sm flex-col gap-3"
     >
-      {serverError && (
-        <div
-          role="alert"
-          className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700"
-        >
-          {serverError}
-        </div>
-      )}
-
       <div className="space-y-1 text-left">
         <label
           htmlFor="leetcodeUsername"

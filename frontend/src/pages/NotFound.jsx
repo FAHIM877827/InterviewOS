@@ -3,11 +3,17 @@ import { ROUTE_PATHS } from "../constants/routePaths";
 
 function NotFound() {
   return (
-    <section className="flex flex-col items-center gap-3 py-16 text-center">
-      <h1 className="text-2xl font-bold text-slate-900">404 - Page Not Found</h1>
-      <p className="text-slate-600">The page you&apos;re looking for doesn&apos;t exist yet.</p>
-      <Link to={ROUTE_PATHS.HOME} className="text-indigo-600 hover:underline">
-        Back to Home
+    <section className="mx-auto flex max-w-md flex-col items-center gap-4 py-20 text-center">
+      <p className="text-6xl font-bold text-indigo-600">404</p>
+      <h1 className="text-2xl font-bold text-slate-900">Page not found</h1>
+      <p className="text-sm text-slate-600">
+        The page you&apos;re looking for doesn&apos;t exist or may have been moved.
+      </p>
+      <Link
+        to={ROUTE_PATHS.HOME}
+        className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-indigo-500"
+      >
+        Back to home
       </Link>
     </section>
   );

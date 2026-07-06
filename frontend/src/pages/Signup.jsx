@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 import { ROUTE_PATHS } from "../constants/routePaths";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -31,12 +32,11 @@ function validate({ email, password, confirmPassword }) {
 
 function Signup() {
   const { signup, isAuthenticated } = useAuth();
+  const { showSuccess, showError } = useToast();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({ email: "", password: "", confirmPassword: "" });
   const [fieldErrors, setFieldErrors] = useState({});
-  const [serverError, setServerError] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Already logged in? Don't show the signup form - send them straight to
@@ -52,8 +52,6 @@ function Signup() {
 
   async function handleSubmit(event) {
     event.preventDefault();
-    setServerError("");
-    setSuccessMessage("");
 
     const errors = validate(form);
     setFieldErrors(errors);
@@ -66,12 +64,10 @@ function Signup() {
       // confirmPassword is client-side only - SignupRequest only accepts
       // { email, password }.
       await signup({ email: form.email, password: form.password });
-      setSuccessMessage("Account created! Redirecting to your dashboard...");
+      showSuccess("Account created! Redirecting to your dashboard...");
       setTimeout(() => navigate(ROUTE_PATHS.DASHBOARD, { replace: true }), 600);
     } catch (error) {
-      setServerError(
-        error.response?.data?.message || "Unable to sign up. Please try again."
-      );
+      showError(error.response?.data?.message || "Unable to sign up. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -91,24 +87,6 @@ function Signup() {
         noValidate
         className="space-y-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
       >
-        {serverError && (
-          <div
-            role="alert"
-            className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700"
-          >
-            {serverError}
-          </div>
-        )}
-
-        {successMessage && (
-          <div
-            role="status"
-            className="rounded-lg bg-green-50 px-4 py-3 text-sm text-green-700"
-          >
-            {successMessage}
-          </div>
-        )}
-
         <div className="space-y-1">
           <label htmlFor="email" className="block text-sm font-medium text-slate-700">
             Email

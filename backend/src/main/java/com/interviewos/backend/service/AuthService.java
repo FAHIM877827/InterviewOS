@@ -9,12 +9,14 @@ import com.interviewos.backend.model.User;
 import com.interviewos.backend.repository.UserRepository;
 import com.interviewos.backend.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -34,6 +36,7 @@ public class AuthService {
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
 
         userRepository.save(user);
+        log.info("New user registered: {}", user.getEmail());
 
         String token = jwtUtil.generateToken(user.getEmail());
         return new AuthResponse(token, user.getEmail());
@@ -45,9 +48,11 @@ public class AuthService {
                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
             );
         } catch (BadCredentialsException ex) {
+            log.warn("Failed login attempt for: {}", request.getEmail());
             throw new InvalidCredentialsException();
         }
 
+        log.info("User logged in: {}", request.getEmail());
         String token = jwtUtil.generateToken(request.getEmail());
         return new AuthResponse(token, request.getEmail());
     }

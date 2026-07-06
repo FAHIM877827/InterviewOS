@@ -1,5 +1,5 @@
 function SkeletonBlock({ className = "" }) {
-  return <div className={`animate-pulse rounded-xl bg-slate-200 ${className}`} />;
+  return <div className={`animate-shimmer rounded-xl ${className}`} />;
 }
 
 // Mirrors the real dashboard layout's shape (readiness card, 4 stat tiles,

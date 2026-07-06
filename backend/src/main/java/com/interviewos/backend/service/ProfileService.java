@@ -11,12 +11,14 @@ import com.interviewos.backend.repository.ProfileSnapshotRepository;
 import com.interviewos.backend.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ProfileService {
@@ -57,6 +59,8 @@ public class ProfileService {
         snapshot.setWeakTopics(weakTopics);
 
         profileSnapshotRepository.save(snapshot);
+        log.info("Linked LeetCode profile '{}' for user {} (readinessScore={})",
+                request.getLeetcodeUsername(), userEmail, readinessScore);
 
         return new ProfileSnapshotResponse(
                 totalSolved, easySolved, mediumSolved, hardSolved,

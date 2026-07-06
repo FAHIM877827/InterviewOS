@@ -1,24 +1,26 @@
-import LinkProfileForm from "./LinkProfileForm";
-
-// Shown when the backend returns 404 for dashboard endpoints, i.e.
-// NoProfileDataException - the user hasn't linked a LeetCode profile yet
-// (ProfileService.linkProfile / POST /api/profile/link). Embeds
-// LinkProfileForm so they can submit a username right here; on success,
-// onProfileLinked (Dashboard's useDashboardData refetch) reloads the
-// dashboard with real data instead of requiring a manual page refresh.
-function EmptyState({ onProfileLinked }) {
+// Shown when a dashboard request fails with something other than 404
+// (network failure, 500, etc.) - see useDashboardData's ERROR branch.
+// Distinct from EmptyState, which handles the 404/"no profile linked" case.
+function ErrorState({ message, onRetry }) {
   return (
-    <div className="flex flex-col items-center gap-4 rounded-xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center">
-      <h2 className="text-lg font-semibold text-slate-900">
-        No LeetCode profile linked yet
+    <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-red-300 bg-red-50 px-6 py-16 text-center">
+      <h2 className="text-lg font-semibold text-red-800">
+        Couldn&apos;t load your dashboard
       </h2>
-      <p className="max-w-sm text-sm text-slate-600">
-        Link your LeetCode profile to start tracking your readiness score,
-        solved problems, and weak topics.
+      <p className="max-w-sm text-sm text-red-700">
+        {message || "Something went wrong while loading your data."}
       </p>
-      <LinkProfileForm onLinked={onProfileLinked} />
+      {onRetry && (
+        <button
+          type="button"
+          onClick={onRetry}
+          className="rounded-lg border border-red-300 bg-white px-4 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-100"
+        >
+          Try again
+        </button>
+      )}
     </div>
   );
 }
 
-export default EmptyState;
+export default ErrorState;

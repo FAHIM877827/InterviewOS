@@ -5,11 +5,13 @@ import com.interviewos.backend.dto.leetcode.LeetCodeGraphQLResponse;
 import com.interviewos.backend.dto.leetcode.MatchedUser;
 import com.interviewos.backend.exception.LeetCodeUserNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class LeetCodeService {
@@ -60,6 +62,7 @@ public class LeetCodeService {
                 .body(LeetCodeGraphQLResponse.class);
 
         if (response == null || response.getData() == null || response.getData().getMatchedUser() == null) {
+            log.info("LeetCode username not found: {}", username);
             throw new LeetCodeUserNotFoundException(username);
         }
 

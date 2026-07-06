@@ -57,14 +57,14 @@ function Dashboard() {
         fetchedAt={summary.fetchedAt}
       />
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-6">
         <StatsCard label="Total Solved" value={summary.totalSolved} accent="indigo" />
         <StatsCard label="Easy" value={summary.easySolved} accent="green" />
         <StatsCard label="Medium" value={summary.mediumSolved} accent="amber" />
         <StatsCard label="Hard" value={summary.hardSolved} accent="red" />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
         <ReadinessHistoryChart history={history} />
         <DifficultyDistributionChart
           easySolved={summary.easySolved}
@@ -73,7 +73,7 @@ function Dashboard() {
         />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
         <TopicCard variant="weak" topics={summary.weakTopics} />
         <TopicCard variant="strong" topics={summary.strongTopics} />
       </div>

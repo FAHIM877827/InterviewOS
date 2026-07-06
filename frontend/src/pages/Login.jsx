@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 import { ROUTE_PATHS } from "../constants/routePaths";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -23,13 +24,12 @@ function validate({ email, password }) {
 
 function Login() {
   const { login, isAuthenticated } = useAuth();
+  const { showSuccess, showError } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
 
   const [form, setForm] = useState({ email: "", password: "" });
   const [fieldErrors, setFieldErrors] = useState({});
-  const [serverError, setServerError] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const redirectTo = location.state?.from?.pathname || ROUTE_PATHS.DASHBOARD;
@@ -47,8 +47,6 @@ function Login() {
 
   async function handleSubmit(event) {
     event.preventDefault();
-    setServerError("");
-    setSuccessMessage("");
 
     const errors = validate(form);
     setFieldErrors(errors);
@@ -59,12 +57,10 @@ function Login() {
     setIsSubmitting(true);
     try {
       await login(form);
-      setSuccessMessage("Login successful! Redirecting...");
+      showSuccess("Login successful! Redirecting...");
       setTimeout(() => navigate(redirectTo, { replace: true }), 600);
     } catch (error) {
-      setServerError(
-        error.response?.data?.message || "Unable to log in. Please try again."
-      );
+      showError(error.response?.data?.message || "Unable to log in. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -84,24 +80,6 @@ function Login() {
         noValidate
         className="space-y-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
       >
-        {serverError && (
-          <div
-            role="alert"
-            className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700"
-          >
-            {serverError}
-          </div>
-        )}
-
-        {successMessage && (
-          <div
-            role="status"
-            className="rounded-lg bg-green-50 px-4 py-3 text-sm text-green-700"
-          >
-            {successMessage}
-          </div>
-        )}
-
         <div className="space-y-1">
           <label htmlFor="email" className="block text-sm font-medium text-slate-700">
             Email
