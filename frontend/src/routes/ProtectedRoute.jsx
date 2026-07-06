@@ -1,14 +1,16 @@
-import { Navigate } from "react-router-dom";
-import { tokenStorage } from "../utils/tokenStorage";
+import { Navigate, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import { ROUTE_PATHS } from "../constants/routePaths";
 
-// Wraps any route element that requires a logged-in user. Not yet used in
-// AppRoutes because no protected pages exist until Commit 9/10, but it's
-// wired up now so those commits only need to add:
-//   <Route path={ROUTE_PATHS.DASHBOARD} element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+// Wraps any route element that requires a logged-in user. Redirects to
+// /login and remembers the attempted location in router state so Login
+// can send the user back after a successful sign-in.
 function ProtectedRoute({ children }) {
-  if (!tokenStorage.isAuthenticated()) {
-    return <Navigate to={ROUTE_PATHS.LOGIN} replace />;
+  const { isAuthenticated } = useAuth();
+  const location = useLocation();
+
+  if (!isAuthenticated) {
+    return <Navigate to={ROUTE_PATHS.LOGIN} state={{ from: location }} replace />;
   }
 
   return children;

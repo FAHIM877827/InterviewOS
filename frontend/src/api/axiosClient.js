@@ -2,9 +2,9 @@ import axios from "axios";
 import { API_BASE_URL } from "../config/env";
 import { tokenStorage } from "../utils/tokenStorage";
 
-// Single axios instance for the whole app. All API modules added in later
-// commits (auth, profile, analytics, dashboard) should import this instead
-// of creating their own axios instance.
+// Single axios instance for the whole app. All API modules (auth, and
+// profile/analytics/dashboard in later commits) import this instead of
+// creating their own axios instance.
 const axiosClient = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -23,13 +23,16 @@ axiosClient.interceptors.request.use((config) => {
 });
 
 // On a 401 (invalid/expired token per JwtUtil.isTokenValid), clear the
-// stored token so ProtectedRoute sends the user back to /login on next
-// navigation instead of retrying with a dead token.
+// stored session. A custom "auth:logout" event is dispatched so
+// AuthContext (which holds React state, not just localStorage) resets
+// immediately even within the same tab - the native "storage" event only
+// fires for other tabs.
 axiosClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      tokenStorage.clearToken();
+      tokenStorage.clearSession();
+      window.dispatchEvent(new Event("auth:logout"));
     }
     return Promise.reject(error);
   }
