@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { ROUTE_PATHS } from "../constants/routePaths";
 
@@ -30,7 +30,7 @@ function validate({ email, password, confirmPassword }) {
 }
 
 function Signup() {
-  const { signup } = useAuth();
+  const { signup, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({ email: "", password: "", confirmPassword: "" });
@@ -38,6 +38,12 @@ function Signup() {
   const [serverError, setServerError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Already logged in? Don't show the signup form - send them straight to
+  // the dashboard instead.
+  if (isAuthenticated) {
+    return <Navigate to={ROUTE_PATHS.DASHBOARD} replace />;
+  }
 
   function handleChange(event) {
     const { name, value } = event.target;

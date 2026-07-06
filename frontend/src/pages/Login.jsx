@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { ROUTE_PATHS } from "../constants/routePaths";
 
@@ -22,7 +22,7 @@ function validate({ email, password }) {
 }
 
 function Login() {
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -33,6 +33,12 @@ function Login() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const redirectTo = location.state?.from?.pathname || ROUTE_PATHS.DASHBOARD;
+
+  // Already logged in? Don't show the login form - send them straight to
+  // the dashboard instead.
+  if (isAuthenticated) {
+    return <Navigate to={ROUTE_PATHS.DASHBOARD} replace />;
+  }
 
   function handleChange(event) {
     const { name, value } = event.target;
