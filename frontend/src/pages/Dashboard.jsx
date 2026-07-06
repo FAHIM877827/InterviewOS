@@ -28,7 +28,7 @@ function Dashboard() {
   if (status === DASHBOARD_STATUS.EMPTY) {
     return (
       <DashboardLayout title="Dashboard" subtitle={`Welcome back, ${email}`}>
-        <EmptyState />
+        <EmptyState onProfileLinked={refetch} />
       </DashboardLayout>
     );
   }
