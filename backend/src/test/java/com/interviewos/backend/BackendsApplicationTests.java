@@ -1,10 +1,10 @@
-package com.interviewos.backends;
+package com.interviewos.backend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class BackendsApplicationTests {
+class BackendApplicationTests {
 
 	@Test
 	void contextLoads() {

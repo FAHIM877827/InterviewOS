@@ -100,6 +100,19 @@
             <scope>test</scope>
         </dependency>
 
+        <!--
+            Required by Maven Surefire 3.x to discover and execute JUnit 5
+            (Jupiter) tests. Without this on the test classpath, surefire
+            can fail to detect any tests even when the test class compiles
+            successfully, reporting "No tests matching pattern ... were
+            executed!".
+        -->
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
